@@ -22,14 +22,14 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "fb_page")
 public class FanPage implements Serializable {
-    
+
     private static final long serialVersionUID = -8106304385629888545L;
-    
+
     @Id
     @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
-    
+
     @Column(name = "name", length = 100)
     private String name;
 
@@ -123,6 +123,5 @@ public class FanPage implements Serializable {
     public String toString() {
         return "FunPage{" + "id=" + id + ", name=" + name + ", description=" + description + ", profilePicUrl=" + profilePicUrl + '}';
     }
-    
-    
+
 }

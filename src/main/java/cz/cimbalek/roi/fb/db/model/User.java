@@ -14,7 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import org.hibernate.annotations.ManyToAny;
 
 /**
  *
@@ -124,7 +123,5 @@ public class User implements Serializable {
     public String toString() {
         return "User{" + "id=" + id + ", name=" + name + ", gender=" + gender + ", profilePicUrl=" + profilePicUrl + ", pages=" + pages + '}';
     }
-    
-    
 
 }
