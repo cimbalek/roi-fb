@@ -63,7 +63,7 @@ public class FacebookRestClient {
                 likes = sendRequestAndProcessResponse(next, Likes.class);
                 next = likes.getPaging().getNext();
                 user.getLikes().getData().addAll(likes.getData());
-                log.info("Adding likes to user: " + likes.toString());
+                log.info(String.format("Adding %d likes to user.", (likes.getData() == null ? 0 : likes.getData().size())));
             }
         } catch (Exception ex) {
             log.error("Obtaining user failed", ex);
