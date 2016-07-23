@@ -20,10 +20,19 @@ public class Likes {
         this.data = data;
     }
 
+    public Paging getPaging() {
+        return paging;
+    }
+
+    public void setPaging(Paging paging) {
+        this.paging = paging;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 31 * hash + Objects.hashCode(this.data);
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.data);
+        hash = 17 * hash + Objects.hashCode(this.paging);
         return hash;
     }
 
@@ -39,12 +48,15 @@ public class Likes {
         if (!Objects.equals(this.data, other.data)) {
             return false;
         }
+        if (!Objects.equals(this.paging, other.paging)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "Likes{" + "data=" + data + '}';
+        return "Likes{" + "data=" + data + ", paging=" + paging + '}';
     }
 
 }

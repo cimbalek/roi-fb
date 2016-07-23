@@ -6,7 +6,7 @@ import java.util.Objects;
  *
  * @author cimbalek
  */
-class PictureData {
+public class PictureData {
 
     private String url;
 

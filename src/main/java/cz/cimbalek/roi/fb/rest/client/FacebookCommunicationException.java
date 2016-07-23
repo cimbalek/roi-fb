@@ -4,7 +4,7 @@ package cz.cimbalek.roi.fb.rest.client;
  *
  * @author cimbalek
  */
-class FacebookCommunicationException extends Exception {
+public class FacebookCommunicationException extends Exception {
 
     public FacebookCommunicationException() {
     }

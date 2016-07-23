@@ -6,7 +6,7 @@ import java.util.Objects;
  *
  * @author cimbalek
  */
-class Paging {
+public class Paging {
 
     private Cursors cursors;
     private String previous;

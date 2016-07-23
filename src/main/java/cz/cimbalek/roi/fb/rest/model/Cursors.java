@@ -6,7 +6,7 @@ import java.util.Objects;
  *
  * @author cimbalek
  */
-class Cursors {
+public class Cursors {
 
     private String before;
     private String after;

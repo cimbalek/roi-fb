@@ -6,7 +6,7 @@ import java.util.Objects;
  *
  * @author cimbalek
  */
-class Picture {
+public class Picture {
 
     private PictureData data;
 

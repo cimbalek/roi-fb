@@ -1,4 +1,4 @@
-package cz.cimbalek.roi.fb.app;
+package cz.cimbalek.roi.fb;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;

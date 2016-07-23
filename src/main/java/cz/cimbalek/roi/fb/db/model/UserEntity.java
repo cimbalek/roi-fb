@@ -21,7 +21,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "fb_user")
-public class User implements Serializable {
+public class UserEntity implements Serializable {
 
     private static final long serialVersionUID = 8690471612862744963L;
 
@@ -42,8 +42,8 @@ public class User implements Serializable {
     @JoinTable(name = "jt_fb_user_page", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", table = "fb_user", nullable = false),
         inverseJoinColumns = @JoinColumn(name = "page_id", referencedColumnName = "id", table = "fb_page", nullable = false)
     )
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = FanPage.class)
-    private List<FanPage> pages;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = FanPageEntity.class)
+    private List<FanPageEntity> pages;
 
     public String getId() {
         return id;
@@ -77,11 +77,11 @@ public class User implements Serializable {
         this.profilePicUrl = profilePicUrl;
     }
 
-    public List<FanPage> getPages() {
+    public List<FanPageEntity> getPages() {
         return pages;
     }
 
-    public void setPages(List<FanPage> pages) {
+    public void setPages(List<FanPageEntity> pages) {
         this.pages = pages;
     }
 
@@ -103,7 +103,7 @@ public class User implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final User other = (User) obj;
+        final UserEntity other = (UserEntity) obj;
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }

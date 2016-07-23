@@ -1,9 +1,12 @@
 package cz.cimbalek.roi.fb.rest.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.cimbalek.roi.fb.rest.model.Likes;
 import cz.cimbalek.roi.fb.rest.model.User;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Arrays;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FacebookRestClient {
 
+    //TODO: Better logging
     private static final Logger log = LoggerFactory.getLogger(FacebookRestClient.class);
 
     @Value("${spring.social.facebook.api.request.host}")
@@ -50,9 +54,21 @@ public class FacebookRestClient {
         User user = null;
         try {
             user = sendRequestAndProcessResponse(url + id + fields + token, User.class);
+
+            log.info("Obtained User: " + user.toString());
+
+            Likes likes;
+            String next = user.getLikes().getPaging().getNext();
+            while (StringUtils.isNotBlank(next)) {
+                likes = sendRequestAndProcessResponse(next, Likes.class);
+                next = likes.getPaging().getNext();
+                user.getLikes().getData().addAll(likes.getData());
+                log.info("Adding likes to user: " + likes.toString());
+            }
         } catch (Exception ex) {
             log.error("Obtaining user failed", ex);
         }
+
         return user;
     }
 
