@@ -1,17 +1,19 @@
 package cz.cimbalek.roi.fb.db.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 
 /**
  *
@@ -36,10 +38,11 @@ public class FanPageEntity implements Serializable {
     @Column(name = "profile_pic_url", length = 255)
     private String profilePicUrl;
 
+    @JsonIgnore
     @JoinTable(name = "jt_fb_user_page", joinColumns = @JoinColumn(name = "page_id", referencedColumnName = "id", table = "fb_page", nullable = false),
         inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", table = "fb_user", nullable = false)
     )
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = UserEntity.class)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = UserEntity.class)
     private List<UserEntity> users;
 
     public String getId() {
@@ -75,6 +78,9 @@ public class FanPageEntity implements Serializable {
     }
 
     public List<UserEntity> getUsers() {
+        if (users == null) {
+            users = new ArrayList<>();
+        }
         return users;
     }
 

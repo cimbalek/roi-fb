@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface FanPageRepo extends JpaRepository<FanPageEntity, String> {
 
+    public void deleteByUsersIsNull();
+
 }

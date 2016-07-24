@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.cimbalek.roi.fb.rest.model.Likes;
 import cz.cimbalek.roi.fb.rest.model.User;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;

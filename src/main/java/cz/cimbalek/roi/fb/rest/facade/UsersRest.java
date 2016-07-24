@@ -1,4 +1,3 @@
-/* (c) GreeNova services 2015 */
 package cz.cimbalek.roi.fb.rest.facade;
 
 import cz.cimbalek.roi.fb.db.manager.UserManager;
@@ -19,16 +18,11 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author cimbalek
  */
-@RestController
-@EnableAutoConfiguration
 @Path("users")
 public class UsersRest {
 
@@ -73,8 +67,7 @@ public class UsersRest {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Response getUserData(@PathParam(value = "id") String id) {
-
-        return null;
+        return Response.ok(userManager.getUser(id)).build();
     }
 
     @GET
@@ -82,13 +75,15 @@ public class UsersRest {
     @Path("{id}/likes")
     public Response getUserLikes(@PathParam(value = "id") String id) {
 
-        return null;
+        return Response.ok(userManager.getUserLikes(id)).build();
     }
 
     @DELETE
     @Path("{id}")
     public Response deleteUserData(@PathParam(value = "id") String id) {
 
-        return null;
+        userManager.delete(id);
+
+        return Response.ok().build();
     }
 }

@@ -1,5 +1,6 @@
 package cz.cimbalek.roi.fb.db.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -36,10 +37,11 @@ public class UserEntity implements Serializable {
     @Column(name = "profile_pic_url", length = 255)
     private String profilePicUrl;
 
+    @JsonIgnore
     @JoinTable(name = "jt_fb_user_page", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", table = "fb_user", nullable = false),
         inverseJoinColumns = @JoinColumn(name = "page_id", referencedColumnName = "id", table = "fb_page", nullable = false)
     )
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = FanPageEntity.class)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = FanPageEntity.class)
     private List<FanPageEntity> pages;
 
     public String getId() {
