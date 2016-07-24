@@ -36,37 +36,33 @@ public class FacebookRestClient {
     /* ************** */
     /* PUBLIC METHODS */
     /* ************** */
-//
-//    public boolean checkConnection() throws FacebookCommunicationException {
-//        User user;
-//        try {
-//            user = getUser();
-//        } catch (FacebookCommunicationException ex) {
-//            throw new FacebookCommunicationException("Connection to Facebook unsuccesssful.");
-//        }
-//        if (user == null) {
-//            throw new FacebookCommunicationException("Connection to Facebook unsuccesssful..");
-//        }
-//        return true;
-//    }
-    public User getUser(String id, String token) throws FacebookCommunicationException {
-        User user = null;
-        try {
-            user = sendRequestAndProcessResponse(url + id + fields + token, User.class);
+    /**
+     * Retrieves user from Facebook.
+     *
+     * @param id id of user to be retrieved.
+     * @param token valid token making user's data accessible.
+     * @return User data structure representing received data in JSON.
+     * @throws FacebookCommunicationException if there are any communication issues.
+     * @throws FacebookRequestFormatException if Facebook refuses request.
+     */
+    public User getUser(String id, String token) throws FacebookCommunicationException, FacebookRequestFormatException {
 
-            log.info("Obtained User: " + user.toString());
+        User user = sendRequestAndProcessResponse(url + id + fields + token, User.class);
 
-            Likes likes;
-            String next = user.getLikes().getPaging().getNext();
-            while (StringUtils.isNotBlank(next)) {
-                likes = sendRequestAndProcessResponse(next, Likes.class);
-                next = likes.getPaging().getNext();
-                user.getLikes().getData().addAll(likes.getData());
-                log.info(String.format("Adding %d likes to user.", (likes.getData() == null ? 0 : likes.getData().size())));
-            }
-        } catch (Exception ex) {
-            log.error("Obtaining user failed", ex);
+        log.debug("Obtained User: " + user.toString());
+
+        Likes likes;
+        String next = user.getLikes().getPaging().getNext();
+        while (StringUtils.isNotBlank(next)) {
+            likes = sendRequestAndProcessResponse(next, Likes.class);
+            next = likes.getPaging().getNext();
+            user.getLikes().getData().addAll(likes.getData());
+            log.debug(String.format("Adding %d likes to user.", (likes.getData() == null ? 0 : likes.getData().size())));
         }
+
+        int likesCount = FacebookClientUtils.getUserLikesCount(user);
+
+        log.info(String.format("User id=%s with %d likes successfully retrieved.", user.getId(), likesCount));
 
         return user;
     }
@@ -74,7 +70,17 @@ public class FacebookRestClient {
     /* *************** */
     /* PRIVATE METHODS */
     /* *************** */
-    private <T> T sendRequestAndProcessResponse(String url, Class<T> result) throws FacebookCommunicationException {
+    /**
+     * Sends HTTP request to specified URL and unpacks response.
+     *
+     * @param <T> Root class to which shall be response unpacked.
+     * @param url Url where to send HTTP request.
+     * @param result Root class to which shall be response unpacked.
+     * @return instance of root class containing data received in response.
+     * @throws FacebookCommunicationException if there are any communication issues or if unexpected response code is received.
+     * @throws FacebookRequestFormatException if Facebook refuses request.
+     */
+    private <T> T sendRequestAndProcessResponse(String url, Class<T> result) throws FacebookCommunicationException, FacebookRequestFormatException {
 
         HttpResponse response = null;
         try {
@@ -87,11 +93,15 @@ public class FacebookRestClient {
                 int code = response.getStatusLine().getStatusCode();
 
                 if (code == 200) {
+                    log.info("Request Successful.");
                     ObjectMapper mapper = new ObjectMapper();
                     return mapper.readValue(response.getEntity().getContent(), result);
-
+                } else if (code == 400) {
+                    log.error("Request Unsuccessfull. Bad Request. Probably not valid combination of user ID and access token, or no permission to access user's data.");
+                    throw new FacebookRequestFormatException("Bad request. Please, make sure you have entered valid combination of user ID and access token and that user permited you access.");
                 } else {
-                    return null;
+                    log.error("Unexpected response from Facebook: " + response.getStatusLine());
+                    throw new FacebookCommunicationException("Facebook returned unexpected response: " + response.getStatusLine());
                 }
 
             } catch (IOException ex) {
@@ -107,6 +117,12 @@ public class FacebookRestClient {
 
     }
 
+    /**
+     * Prepares HTTP GET request for specified url.
+     *
+     * @param url url to which request shall be sent.
+     * @return Prepared HTTP GET request
+     */
     private HttpGet prepareGetRequest(String url) {
         HttpGet getRequest = new HttpGet(url);
 
@@ -117,6 +133,13 @@ public class FacebookRestClient {
         return getRequest;
     }
 
+    /**
+     * Executes HTTPUriReques request.
+     *
+     * @param request request to be executed.
+     * @return HTTP response returned for request.
+     * @throws IOException if request fails.
+     */
     private HttpResponse executeRequest(HttpUriRequest request) throws IOException {
         HttpClient client = HttpClientBuilder.create().build();
 
@@ -124,7 +147,7 @@ public class FacebookRestClient {
 
         HttpResponse response = client.execute(request);
 
-        log.debug("Obtained response: " + response.getStatusLine() + ". Entity: " + response.getEntity(), response);
+        log.debug("Obtained response: " + response.getStatusLine() + ". Entity: " + response.getEntity().toString(), response);
 
         return response;
     }

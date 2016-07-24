@@ -20,17 +20,39 @@ class FanPageManager {
     @Autowired
     private FanPageRepo fanPageRepo;
 
+    /* ************** */
+    /* PUBLIC METHODS */
+    /* ************** */
+    /**
+     * Deletes pages which are not liked by anyone.
+     */
     public void deletePagesWithNoLikes() {
         fanPageRepo.deleteByUsersIsNull();
     }
 
+    /**
+     * Persists user's likes to the DB. Pages are first checked if present in the DB, updated/converted, assigned with UserEntity and finally saved to the DB.
+     *
+     * @param likes Likes JSON.
+     * @param userE UserEntity to which shall be pages assigned.
+     */
     public void persistPagesForUser(Likes likes, UserEntity userE) {
         List<FanPageEntity> pages = convertPages(likes, userE);
-        
+
         fanPageRepo.save(pages);
         fanPageRepo.flush();
     }
-    
+
+    /* *************** */
+    /* PRIVATE METHODS */
+    /* *************** */
+    /**
+     * Checks if pages already exist in the DB and then converts/updates them and assigns them to the UserEntity specified.
+     *
+     * @param likes Likes JSON to be converted.
+     * @param userE UserEntity to which shall be pages assigned.
+     * @return
+     */
     private List<FanPageEntity> convertPages(Likes likes, UserEntity userE) {
 
         List<FanPageEntity> pages;
@@ -43,12 +65,12 @@ class FanPageManager {
 
         for (Like like : likes.getData()) {
             FanPageEntity page = fanPageRepo.findOne(like.getId());
-            
+
             if (page == null) {
-                page  = new FanPageEntity();
+                page = new FanPageEntity();
+                page.setId(like.getId());
             }
 
-            page.setId(like.getId());
             page.setDescription(like.getAbout());
             page.setName(like.getName());
             page.setProfilePicUrl(like.getPicture().getData().getUrl());
@@ -59,6 +81,5 @@ class FanPageManager {
 
         return pages;
     }
-
 
 }
