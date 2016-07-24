@@ -1,14 +1,12 @@
 package cz.cimbalek.roi.fb.db.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -20,30 +18,30 @@ import javax.persistence.Table;
  * @author cimbalek
  */
 @Entity
-@Table(name = "fb_page")
-public class FanPage implements Serializable {
-    
-    private static final long serialVersionUID = -8106304385629888545L;
-    
+@Table(name = "fb_user")
+public class UserEntity implements Serializable {
+
+    private static final long serialVersionUID = 8690471612862744963L;
+
     @Id
-    @Column(name = "id", unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", unique = true, nullable = false, length = 50)
     private String id;
-    
+
     @Column(name = "name", length = 100)
     private String name;
 
-    @Column(name = "description", length = 1000)
-    private String description;
+    @Column(name = "gender", length = 10)
+    private String gender;
 
     @Column(name = "profile_pic_url", length = 255)
     private String profilePicUrl;
 
-    @JoinTable(name = "jt_fb_user_page", joinColumns = @JoinColumn(name = "page_id", referencedColumnName = "id", table = "fb_page", nullable = false),
-        inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", table = "fb_user", nullable = false)
+    @JsonIgnore
+    @JoinTable(name = "jt_fb_user_page", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", table = "fb_user", nullable = false),
+        inverseJoinColumns = @JoinColumn(name = "page_id", referencedColumnName = "id", table = "fb_page", nullable = false)
     )
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = User.class)
-    private List<User> users;
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = FanPageEntity.class)
+    private List<FanPageEntity> pages;
 
     public String getId() {
         return id;
@@ -61,12 +59,12 @@ public class FanPage implements Serializable {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getGender() {
+        return gender;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getProfilePicUrl() {
@@ -77,20 +75,20 @@ public class FanPage implements Serializable {
         this.profilePicUrl = profilePicUrl;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public List<FanPageEntity> getPages() {
+        return pages;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setPages(List<FanPageEntity> pages) {
+        this.pages = pages;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
+        int hash = 3;
         hash = 89 * hash + Objects.hashCode(this.id);
         hash = 89 * hash + Objects.hashCode(this.name);
-        hash = 89 * hash + Objects.hashCode(this.description);
+        hash = 89 * hash + Objects.hashCode(this.gender);
         hash = 89 * hash + Objects.hashCode(this.profilePicUrl);
         return hash;
     }
@@ -103,14 +101,14 @@ public class FanPage implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final FanPage other = (FanPage) obj;
+        final UserEntity other = (UserEntity) obj;
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if (!Objects.equals(this.description, other.description)) {
+        if (!Objects.equals(this.gender, other.gender)) {
             return false;
         }
         if (!Objects.equals(this.profilePicUrl, other.profilePicUrl)) {
@@ -121,8 +119,7 @@ public class FanPage implements Serializable {
 
     @Override
     public String toString() {
-        return "FunPage{" + "id=" + id + ", name=" + name + ", description=" + description + ", profilePicUrl=" + profilePicUrl + '}';
+        return "User{" + "id=" + id + ", name=" + name + ", gender=" + gender + ", profilePicUrl=" + profilePicUrl + ", pages=" + pages + '}';
     }
-    
-    
+
 }
